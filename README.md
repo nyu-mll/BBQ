@@ -7,7 +7,7 @@ Authors: Alicia Parrish, Angelica Chen, Nikita Nangia, Vishakh Padmakumar, Jason
 It is well documented that NLP models learnsocial biases present in the world, but littlework has been done to show how these biasesmanifest in actual model outputs for appliedtasks like question answering (QA). We introduce the Bias Benchmark for QA (BBQ), adataset consisting of question-sets constructedby the authors that highlightattestedsocialbiases against people belonging to protectedclasses along nine different social dimensionsrelevant for U.S. English-speaking contexts.Our task evaluates model responses at two distinct levels: (i) given an under-informative context, test how strongly model answers reflectsocial biases, and (ii) given an adequately informative context, test whether the model’s biases still override a correct answer choice. Wefind that models strongly rely on stereotypeswhen the context is ambiguous, meaning thatthe model’s outputs consistently reproduceharmful biases in this setting. Though modelsare much more accurate when the context provides an unambiguous answer, they still relyon stereotyped information and achieve an accuracy 2.5 percentage points higher on examples where the correct answer aligns with a social bias, with this accuracy difference widening to over 5 points for examples targeting gender.
 
 ## The paper
-You can read our paper here...
+You can read our paper "BBQ: A Hand-Built Bias Benchmark for Question Answering" [here](https://github.com/nyu-mll/BBQ/blob/main/QA_bias_benchmark.pdf).
 
 ## File structure
 - data
