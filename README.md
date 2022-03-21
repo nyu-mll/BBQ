@@ -3,11 +3,11 @@ Repository for the Bias Benchmark for QA dataset.
 
 Authors: Alicia Parrish, Angelica Chen, Nikita Nangia, Vishakh Padmakumar, Jason Phang, Jana Thompson, Phu Mon Htut, and Samuel R. Bowman.
 
-## About BBQ
-It is well documented that NLP models learnsocial biases present in the world, but littlework has been done to show how these biasesmanifest in actual model outputs for appliedtasks like question answering (QA). We introduce the Bias Benchmark for QA (BBQ), adataset consisting of question-sets constructedby the authors that highlightattestedsocialbiases against people belonging to protectedclasses along nine different social dimensionsrelevant for U.S. English-speaking contexts.Our task evaluates model responses at two distinct levels: (i) given an under-informative context, test how strongly model answers reflectsocial biases, and (ii) given an adequately informative context, test whether the model’s biases still override a correct answer choice. Wefind that models strongly rely on stereotypeswhen the context is ambiguous, meaning thatthe model’s outputs consistently reproduceharmful biases in this setting. Though modelsare much more accurate when the context provides an unambiguous answer, they still relyon stereotyped information and achieve an accuracy 2.5 percentage points higher on examples where the correct answer aligns with a social bias, with this accuracy difference widening to over 5 points for examples targeting gender.
+## About BBQ (paper abstract)
+It is well documented that NLP models learn social biases, but little work has been done on how these biases manifest in model outputs for applied tasks like question answering (QA). We introduce the Bias Benchmark for QA (BBQ), a dataset of question sets constructed by the authors that highlight attested social biases against people belonging to protected classes along nine social dimensions relevant for U.S. English-speaking contexts. Our task evaluates model responses at two levels: (i) given an under-informative context, we test how strongly responses refect social biases, and (ii) given an adequately informative context, we test whether the model's biases override a correct answer choice. We fnd that models often rely on stereotypes when the context is under-informative, meaning the model's outputs consistently reproduce harmful biases in this setting. Though models are more accurate when the context provides an informative answer, they still rely on stereotypes and average up to 3.4 percentage points higher accuracy when the correct answer aligns with a social bias than when it conficts, with this difference widening to over 5 points on examples targeting gender for most models tested.
 
 ## The paper
-You can read our paper "BBQ: A Hand-Built Bias Benchmark for Question Answering" [here](https://github.com/nyu-mll/BBQ/blob/main/QA_bias_benchmark.pdf).
+You can read our paper "BBQ: A Hand-Built Bias Benchmark for Question Answering" [here](https://github.com/nyu-mll/BBQ/blob/main/QA_bias_benchmark.pdf). The paper is currently on [arxiv](https://arxiv.org/abs/2110.08193) and has been accepted to Findings of ACL 2022.
 
 ## File structure
 - data
@@ -15,10 +15,16 @@ You can read our paper "BBQ: A Hand-Built Bias Benchmark for Question Answering"
     - Contents: 11 jsonl files, each containing all templated examples. Each category is a separate file.
 - results
     - Description: This folder contains our results after running BBQ on UnifiedQA
-    - Contents: 11 jsonl files, each containing all templated examples and three sets of results for each example line:
-        - Predictions using ARC-format
-        - Predictions using RACE-format
-        - Predictions using a question-only baseline
+    - Contents: 
+        - UnifiedQA
+            - 11 jsonl files, each containing all templated examples and three sets of results for each example line:
+                - Predictions using ARC-format
+                - Predictions using RACE-format
+                - Predictions using a question-only baseline (note that this result is not meaningful in disambiguated contexts, as the model input is identical to the ambiguous contexts)
+        - RoBERTa_and_DeBERTaV3
+            - 1 .csv file containing all results from the RoBERTa-Base, RoBERTa-Large, DeBERTaV3-Base, and DeBERTaV3-Large
+            - `index` and `cat` columns correspond to the `example_id` and `cateogry` from the data files
+            - Values in `ans0`, `ans1`, and `ans2` correspond to the logits for each of the three answer options from the data files
 - supplemental
     - Description: Additional files used in validation and selecting names for the vocabulary
     - Contents: 
