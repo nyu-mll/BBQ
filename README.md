@@ -26,10 +26,21 @@ You can read our paper "BBQ: A Hand-Built Bias Benchmark for Question Answering"
             - `index` and `cat` columns correspond to the `example_id` and `cateogry` from the data files
             - Values in `ans0`, `ans1`, and `ans2` correspond to the logits for each of the three answer options from the data files
 - supplemental
-    - Description: Additional files used in validation and selecting names for the vocabulary
+    - Description: Additional files used in validation and selecting names for the vocabulary and additional metadata to make analysis easier
     - Contents: 
         - MTurk_validation contains the HIT templates, scripts, input data, and results from our MTurk validations
         - name_job_data contains files downloaded that contain name & demographic information or occupation prestige scores for developing these portions of the vocabulary
+        - `additional_metadata.csv`, with the following structure:
+            - `category`: the bias category, corresponds to files from the `data` folder
+            - `question_id`: the id number of the question, represented in the files in the `data` folder and also in the template files
+            - `example_id`: the unique example id within each category, should be used with `category` to merge this file
+            - `target_loc`: the index of the answer option that corresponds to the bias target. Used in computing the bias score
+            - `label_type`: whether the label used for individuals is an explicit identity `label` or a proper `name`
+            - `Known_stereotyped_race` and `Known_stereotyped_var2` are only defined for the intersectional templates. Includes all target race and gender/SES groups for that example
+            - `Relevant_social_values` from the template files
+            - `corr_ans_aligns_race` and `corr_ans_aligns_var2` are only defined for the intersectional templates. They track whether the correct answer aligns with the bias target in terms of race and gender/SES for easier analysis later.
+            - `full_cond` is only defined for the intersectional templates. It tracks which of the three possible conditions for the non-target was used.
+            - `Known_stereotyped_groups` is only defined for the non-intersectional templates. Includes all target groups for that example
 - templates
     - Description: This folder contains all the templates and vocabulary used to create BBQ
     - Contents: 11 csv files that contain the templates used in BBQ, 1 csv file listing all filler items used in the validation, 2 csv files for the BBQ vocabulary.
