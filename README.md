@@ -7,7 +7,7 @@ Authors: Alicia Parrish, Angelica Chen, Nikita Nangia, Vishakh Padmakumar, Jason
 It is well documented that NLP models learn social biases, but little work has been done on how these biases manifest in model outputs for applied tasks like question answering (QA). We introduce the Bias Benchmark for QA (BBQ), a dataset of question sets constructed by the authors that highlight attested social biases against people belonging to protected classes along nine social dimensions relevant for U.S. English-speaking contexts. Our task evaluates model responses at two levels: (i) given an under-informative context, we test how strongly responses refect social biases, and (ii) given an adequately informative context, we test whether the model's biases override a correct answer choice. We fnd that models often rely on stereotypes when the context is under-informative, meaning the model's outputs consistently reproduce harmful biases in this setting. Though models are more accurate when the context provides an informative answer, they still rely on stereotypes and average up to 3.4 percentage points higher accuracy when the correct answer aligns with a social bias than when it conficts, with this difference widening to over 5 points on examples targeting gender for most models tested.
 
 ## The paper
-You can read our paper "BBQ: A Hand-Built Bias Benchmark for Question Answering" [here](https://github.com/nyu-mll/BBQ/blob/main/QA_bias_benchmark.pdf). The paper is currently on [arxiv](https://arxiv.org/abs/2110.08193) and has been accepted to Findings of ACL 2022.
+You can read our paper "BBQ: A Hand-Built Bias Benchmark for Question Answering" [here](https://github.com/nyu-mll/BBQ/blob/main/QA_bias_benchmark.pdf). The paper has been published in the Findings of ACL 2022 [here](https://aclanthology.org/2022.findings-acl.165/).
 
 ## File structure
 - data
@@ -44,4 +44,10 @@ You can read our paper "BBQ: A Hand-Built Bias Benchmark for Question Answering"
 - templates
     - Description: This folder contains all the templates and vocabulary used to create BBQ
     - Contents: 11 csv files that contain the templates used in BBQ, 1 csv file listing all filler items used in the validation, 2 csv files for the BBQ vocabulary.
+
+## Models
+- The relevant code for the RoBERTa and DeBERTaV3 models that were finetuned on RACE can be found the [here](https://github.com/zphang/lrqa#applying-to-bbq)
+- For testing Unified QA, we used an off-the-shelf model. String formatting for inference was created by concatenating the following fields from the data files:
+    - RACE-style-format: `question + \n + '(a)' + ans_0 + '(b)' + ans_1 + '(c)' + ans2 + \n + context`
+    - ARC-style-format: `context + question + \n + '(a)' + ans_0 + '(b)' + ans_1 + '(c)' + ans2`
 
