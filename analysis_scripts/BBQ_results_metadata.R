@@ -125,15 +125,32 @@ dat_base<-dat4 %>%
                                 target_loc_2 == 1 ~ 2))%>%
   rename("label_type" = ProperName)
 
-table(dat_base$target_loc)
+# in the non-neg examples, the target is actually the non-target, here looking for the other answer option that's not target_loc and not "unknown"
+dat_base_target_loc_corrected <- dat_base %>%
+  mutate(new_target_loc = case_when(question_polarity=="nonneg"&target_loc==0&ans1_info!="unknown"~1,
+                                    question_polarity=="nonneg"&target_loc==0&ans2_info!="unknown"~2,
+                                    question_polarity=="nonneg"&target_loc==1&ans0_info!="unknown"~0,
+                                    question_polarity=="nonneg"&target_loc==1&ans2_info!="unknown"~2,
+                                    question_polarity=="nonneg"&target_loc==2&ans0_info!="unknown"~0,
+                                    question_polarity=="nonneg"&target_loc==2&ans1_info!="unknown"~1,
+                                    question_polarity=="neg" ~ target_loc))%>%
+  # make sure target loc wasn't identified for more than one answer option
+  mutate(new_target_loc = ifelse(target_loc_0+target_loc_1+target_loc_2 > 1, NA,new_target_loc))
 
-dat_base_selected <- dat_base %>%
-  select(category,question_index,example_id,target_loc,label_type,Known_stereotyped_groups,Relevant_social_values)
+# should come back as 0, is actually 16 and these questions will be removed in later analysis
+length(dat_base_target_loc_corrected%>%filter(is.na(new_target_loc))%>%pull(question_index))
+
+table(dat_base$target_loc)
+table(dat_base_target_loc_corrected$new_target_loc)
+
+dat_base_selected <- dat_base_target_loc_corrected %>%
+  select(category,question_index,example_id,new_target_loc,label_type,Known_stereotyped_groups,Relevant_social_values)%>%
+  rename(target_loc=new_target_loc)
 
 
 # ------------------------------------------------------------
 # for intersectional templates
-templates_files = list.files("templates/", pattern="*.csv", full.names = T)
+templates_files = list.files("../templates/", pattern="*.csv", full.names = T)
 st_group_data = NULL
 for(i in c(1:length(templates_files))){
   if(grepl("_x_",templates_files[i])){
@@ -197,17 +214,32 @@ dat.race_x_gender<-dat4 %>%
   mutate(full_cond = paste(race_condition,gender_condition,sep="\n ")) %>%
   mutate(target_loc = ifelse(substr(Known_stereotyped_var2,1,1)==ans0_gender & str_detect(Known_stereotyped_race,substr(ans0_race,3,length(ans0_race))),0,
                              ifelse(substr(Known_stereotyped_var2,1,1)==ans1_gender & str_detect(Known_stereotyped_race,substr(ans1_race,3,length(ans1_race))),1,
-                                    ifelse(substr(Known_stereotyped_var2,1,1)==ans2_gender & str_detect(Known_stereotyped_race,substr(ans2_race,3,length(ans2_race))),2,"x"))))%>%
+                                    ifelse(substr(Known_stereotyped_var2,1,1)==ans2_gender & str_detect(Known_stereotyped_race,substr(ans2_race,3,length(ans2_race))),2,NA))))%>%
   rename("corr_ans_aligns_var2" = corr_ans_aligns_gender)
 
-table(dat.race_x_gender$full_cond)
-table(dat.race_x_gender$target_loc)
+# in the non-neg examples, the target is actually the non-target, here looking for the other answer option that's not target_loc and not "unknown"
+dat.race_x_gender_target_loc_corrected <- dat.race_x_gender %>%
+  mutate(new_target_loc = case_when(question_polarity=="nonneg"&target_loc==0&ans1_gender!="unknown"~1,
+                                    question_polarity=="nonneg"&target_loc==0&ans2_gender!="unknown"~2,
+                                    question_polarity=="nonneg"&target_loc==1&ans0_gender!="unknown"~0,
+                                    question_polarity=="nonneg"&target_loc==1&ans2_gender!="unknown"~2,
+                                    question_polarity=="nonneg"&target_loc==2&ans0_gender!="unknown"~0,
+                                    question_polarity=="nonneg"&target_loc==2&ans1_gender!="unknown"~1,
+                                    question_polarity=="neg" ~ target_loc))
 
-dat_racegen_selected <- dat.race_x_gender %>%
-  select(category,question_index,example_id,target_loc,label_type,
+# should come back as 0
+length(dat.race_x_gender_target_loc_corrected%>%filter(is.na(new_target_loc))%>%pull(question_index))
+
+dat_racegen_selected <- dat.race_x_gender_target_loc_corrected %>%
+  select(category,question_index,example_id,new_target_loc,label_type,
          Known_stereotyped_race,Known_stereotyped_var2,Relevant_social_values,
-         corr_ans_aligns_var2,corr_ans_aligns_race,full_cond)
+         corr_ans_aligns_var2,corr_ans_aligns_race,full_cond)%>%
+  rename(target_loc=new_target_loc)
 
+table(dat.race_x_gender$full_cond)
+table(dat_racegen_selected$full_cond) # should not change from above
+table(dat.race_x_gender$target_loc)
+table(dat_racegen_selected$target_loc) # should change slightly from above
 
 dat.race_x_ses<-dat4 %>% 
   filter(category=="Race_x_SES")%>%
@@ -249,16 +281,33 @@ dat.race_x_ses<-dat4 %>%
   mutate(full_cond = paste(race_condition,SES_condition,sep="\n ")) %>%
   mutate(target_loc = ifelse(substr(Known_stereotyped_var2,1,3)==substr(ans0_gender,1,3) & str_detect(Known_stereotyped_race,ans0_race),0,
                              ifelse(substr(Known_stereotyped_var2,1,3)==substr(ans1_gender,1,3) & str_detect(Known_stereotyped_race,ans1_race),1,
-                                    ifelse(substr(Known_stereotyped_var2,1,3)==substr(ans2_gender,1,3) & str_detect(Known_stereotyped_race,ans2_race),2,"x"))))%>%
+                                    ifelse(substr(Known_stereotyped_var2,1,3)==substr(ans2_gender,1,3) & str_detect(Known_stereotyped_race,ans2_race),2,NA))))%>%
   rename("corr_ans_aligns_var2" = corr_ans_aligns_gender)
 
-table(dat.race_x_ses$full_cond)
-table(dat.race_x_ses$target_loc)
+# in the non-neg examples, the target is actually the non-target, here looking for the other answer option that's not target_loc and not "unknown"
+dat.race_x_ses_target_loc_corrected <- dat.race_x_ses %>%
+  mutate(new_target_loc = case_when(question_polarity=="nonneg"&target_loc==0&ans1_gender!="unknown"~1,
+                                    question_polarity=="nonneg"&target_loc==0&ans2_gender!="unknown"~2,
+                                    question_polarity=="nonneg"&target_loc==1&ans0_gender!="unknown"~0,
+                                    question_polarity=="nonneg"&target_loc==1&ans2_gender!="unknown"~2,
+                                    question_polarity=="nonneg"&target_loc==2&ans0_gender!="unknown"~0,
+                                    question_polarity=="nonneg"&target_loc==2&ans1_gender!="unknown"~1,
+                                    question_polarity=="neg" ~ target_loc))
 
-dat_raceses_selected <- dat.race_x_gender %>%
-  select(category,question_index,example_id,target_loc,label_type,
+# should come back as 0
+length(dat.race_x_gender_target_loc_corrected%>%filter(is.na(new_target_loc))%>%pull(question_index))
+
+dat_raceses_selected <- dat.race_x_ses_target_loc_corrected %>%
+  select(category,question_index,example_id,new_target_loc,label_type,
          Known_stereotyped_race,Known_stereotyped_var2,Relevant_social_values,
-         corr_ans_aligns_var2,corr_ans_aligns_race,full_cond)
+         corr_ans_aligns_var2,corr_ans_aligns_race,full_cond)%>%
+  rename(target_loc=new_target_loc)
+
+
+table(dat.race_x_ses$full_cond)
+table(dat_raceses_selected$full_cond) # should be the same as above
+table(dat.race_x_ses$target_loc)
+table(dat_raceses_selected$target_loc) # should be slightly different from above
 
 dat_ints <- rbind(dat_racegen_selected,dat_raceses_selected)
 dat_ints$Known_stereotyped_groups = NA
