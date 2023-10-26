@@ -1,0 +1,12 @@
+LICENSE
+README.md
+setup.py
+BBQ.egg-info/PKG-INFO
+BBQ.egg-info/SOURCES.txt
+BBQ.egg-info/dependency_links.txt
+BBQ.egg-info/requires.txt
+BBQ.egg-info/top_level.txt
+bbq/__init__.py
+bbq/generate_from_template_all_categories.py
+bbq/generate_from_template_intersectional_cats.py
+bbq/utils.py
