@@ -2,14 +2,17 @@ import pandas as pd
 import numpy as np
 import io
 import json
-from .utils import *
+from utils import *
 import random
 import re
 import ast
 import os
 import pkg_resources
 
-def generate_data(cats=None, data_dir='BBQ/data_new/', template_dir='BBQ/templates/'):
+def generate_data(cats=None, data_dir='~/BBQ/data_new/'):
+    # Expand the user directory
+    data_dir = os.path.expanduser(data_dir)
+    
     if cats is None:
         cats = [
             "Disability_status", "Age", "Physical_appearance", "SES", "Gender_identity",
@@ -17,6 +20,7 @@ def generate_data(cats=None, data_dir='BBQ/data_new/', template_dir='BBQ/templat
         ]
 
     # Read in vocabulary files
+    template_dir = '../templates/'
     vocab_path = pkg_resources.resource_filename(__name__, f'{template_dir}vocabulary.csv')
     vocab = pd.read_csv(vocab_path)
     vocab = vocab[vocab.Pilot_include != "No"]
@@ -362,8 +366,8 @@ def generate_data(cats=None, data_dir='BBQ/data_new/', template_dir='BBQ/templat
 
                     print("generated %s sentences total for %s" % (str(nn), cat))
 
-                dat_file.close()
+            dat_file.close()
 
 
 # Example of how to call the function
-# generate_data()
+generate_data(cats=None, data_dir='~/Develeopment/HydroEvaluation/data_new/')
